@@ -27,25 +27,82 @@ describe Stubhub::Client do
     let(:stubhub) { Stubhub::Client.new(consumer_key, consumer_secret) }
     let(:username) { 'user' }
     let(:password) { 'pass' }
-    let(:auth_hash) { 'Zm9vX2tleTpmb29fc2VjcmV0' }
 
     it 'calls API to log in' do
-
-      stub_request(:post, 'https://api.stubhub.com/login').with(
+      stub = stub_request(:post, "https://#{consumer_key}:#{consumer_secret}@api.stubhub.com/login").with(
         body: {
           grant_type: 'password',
-          username: username,
-          password: password
+          username: username, password: password
         },
         headers: {
           'Content-Type' => 'application/x-www-form-urlencoded',
-          'Authentication' => "Basic #{auth_hash}"
         }
-      )
+      ).to_return(status: 200, body: '{}')
 
       stubhub.login(username, password)
+
+      stub.should have_been_requested
     end
 
+    it 'updates user credentials upon successful login' do
+      access_token = 'foo_access_token'
+      refresh_token = 'bar_refresh_token'
+      user_guid = 'foobar_user_guid'
+      expires_in = '1234567890'
+
+      stub_request(:post, /.*/)
+        .to_return(status: 200, body: {
+          token_type: 'bearer',
+          expires_in: expires_in,
+          refresh_token: refresh_token,
+          access_token: access_token
+      }.to_json, headers: {
+          'Content-Type' => 'application/json',
+          'X-StubHub-User-GUID' => user_guid
+        })
+
+      stubhub.login(username, password)
+
+      stubhub.access_token.should eq(access_token)
+      stubhub.user.should eq(user_guid)
+      stubhub.refresh_token.should eq(refresh_token)
+      stubhub.expires_in.should eq(expires_in)
+    end
+
+    it 'returns true for a successful login false for unsuccessful' do
+      stub_request(:post, /.*/)
+        .to_return(status: 200, body: '{}')
+        .to_return(status: 403, body: '{}')
+
+      stubhub.login(username, password).should be_true
+      stubhub.login(username, password).should be_false
+    end
+
+  end
+
+  context 'getting sales' do 
+    let(:access_token) { 'foo_access_token' }
+    let(:user) { 'foo_user' }
+    let(:stubhub) {
+      stubhub = Stubhub.new(consumer_key, consumer_secret)
+      stubhub.user = user
+      stubhub.access_token = access_token
+      stubhub
+    }
+
+    it 'gets a list of sales' do
+      stub_request(:get, "https://api.stubhub.com/accountmanagement/sales/v1/seller/#{user}")
+        .with(headers: {
+          'Authorization' => "Bearer #{access_token}"
+        })
+        .to_return(status: 200, 
+          body: {sales: []}.to_json,
+          headers: {
+            'Content-Type' => 'application/json'
+          })
+
+      stubhub.sales.count.should eq 0
+    end
   end
 
 end

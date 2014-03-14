@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Stubhub::VERSION
   spec.authors       = ["Vahur Roosimaa"]
   spec.email         = ["vahur.roosimaa@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = "Stubhub API wrapper"
+  spec.description   = ""
   spec.homepage      = ""
   spec.license       = "MIT"
 
