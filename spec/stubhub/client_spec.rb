@@ -101,4 +101,90 @@ describe Stubhub::Client do
 
   end
 
+  context ".create_listing" do
+
+    let(:stubhub) { 
+      stubhub = Stubhub::Client.new(consumer_key, consumer_secret) 
+      stubhub.user = 'userid'
+      stubhub.access_token = 'access_token'
+      stubhub
+    }
+
+    let (:valid_response) {
+      {
+        status: 200,
+        headers: {
+          'Content-Type' => 'application/json'
+        },
+        body: {
+          listing: {
+            id: 123123
+          }
+        }.to_json
+      }
+    }
+
+    it "creates listing from hash" do
+      create_listing_request = stub_request(:post, /.+\/inventory\/listings\/v1$/)
+        .with(body: {listing: {
+          eventId: "123",
+          quantity: 5,
+          section: "Section A",
+          rows: "14",
+          seats: "2,3,4,5,6",
+          pricePerTicket: 123.25,
+          splitOptions: "NOSINGLES"
+        }}, headers: {
+          'Content-Type' => 'application/json'
+        })
+        .to_return(valid_response)
+
+      stubhub.create_listing({
+        event_id: '123',
+        quantity: 5,
+        section: "Section A",
+        rows: "14",
+        seats: "2,3,4,5,6",
+        price_per_ticket: 123.25,
+        split_options: :no_singles
+      })
+
+      expect(create_listing_request).to have_been_requested
+    end
+
+    it "works with GA" do
+
+      create_listing_request = stub_request(:post, /.+\/inventory\/listings\/v1$/)
+        .with(body: {listing: {
+          eventId: "124",
+          quantity: 3,
+          seats: "1,2,3",
+          pricePerTicket: 123.25,
+          splitOptions: "NOSINGLES"
+        }}, headers: {
+          'Content-Type' => 'application/json'
+        })
+        .to_return(valid_response)
+
+      stubhub.create_listing({
+        event_id: '124',
+        quantity: 3,
+        price_per_ticket: 123.25,
+        split_options: :no_singles,
+        seats: "1,2,3" # Make up seat numbers for GA
+      })
+
+      expect(create_listing_request).to have_been_requested
+    end
+
+    it "returns id" do
+      stub_request(:post, /.*/)
+        .to_return(valid_response)
+
+      listing_id = stubhub.create_listing({})
+      expect(listing_id).to eq(123123)
+    end
+
+  end
+
 end

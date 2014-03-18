@@ -17,12 +17,12 @@ module Stubhub
 
     def login(opts = {})
       if opts.include? :refresh_token?
-        response = post '/login', {
+        response = post '/login', :form, {
           grant_type: 'refresh_token',
           refresh_token: opts[:refresh_token]
         }
       else
-        response = post '/login', {
+        response = post '/login', :form, {
           grant_type: 'password',
           username: opts[:username],
           password: opts[:password]
@@ -41,12 +41,43 @@ module Stubhub
       # Return true if login was successful
       response.code == 200
     end
+    
+    def create_listing(opts = {})
+      listing_params = {
+          eventId: opts[:event_id],
+          quantity: opts[:quantity],
+          seats: opts[:seats],
+          pricePerTicket: opts[:price_per_ticket],
+          splitOptions: opts[:split_options].to_s.upcase.gsub('_', '')
+      }
 
-    def post(path, body)
+      # Optional params to support GA tickets
+      listing_params[:section] = opts[:section] if opts.include? :section
+      listing_params[:rows] = opts[:rows] if opts.include? :rows
+      
+      response = post '/inventory/listings/v1', :json, {
+        listing: listing_params
+      }
+
+      if response.code == 200
+        return response.parsed_response["listing"]["id"]
+      end
+    end
+
+    def post(path, type, body)
       auth_hash = Base64.encode64("#{@consumer_key}:#{@consumer_secret}")
 
       # Enable sandboxing
       body.merge({scope: 'SANDBOX'}) if self.sandbox
+
+      # Different headers for different requests
+      headers = {}
+      if type == :json
+        headers['Content-Type'] = 'application/json'
+        body = body.to_json
+      else
+        headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      end
 
       options = {
         body: body,
@@ -54,9 +85,7 @@ module Stubhub
           username: @consumer_key,
           password: @consumer_secret
         },
-        headers: {
-          'Content-Type' => 'application/x-www-form-urlencoded'
-        }
+        headers: headers
       }
       self.class.post(path, options)
     end
