@@ -190,7 +190,71 @@ describe Stubhub::Client do
   end
 
   context ".sales" do 
+    let(:stubhub) { 
+      stubhub = Stubhub::Client.new(consumer_key, consumer_secret) 
+      stubhub.user = 'userid'
+      stubhub.access_token = 'access_token'
+      stubhub
+    }
+
+    let (:valid_response) {
+      {
+        status: 200,
+        headers: {
+          'Content-Type' => 'application/json'
+        },
+        body: {
+          sales: {
+            sale: [
+              {}, {}
+            ]
+          }
+        }.to_json
+      }
+    }
+
+    it "returns sales" do
+      sales_request = stub_request(:get, 'https://api.stubhub.com/accountmanagement/sales/v1/seller/userid?sort=SALEDATE desc')
+        .with(headers: {
+          'Authorization' => 'Bearer access_token'
+        })
+        .to_return(valid_response)
+
+      sales = stubhub.sales
+
+      expect(sales_request).to have_been_requested
+      expect(sales.count).to eq(2)
+    end
+
+  end
+
+  context ".predeliver" do
     
+    let(:stubhub) { 
+      stubhub = Stubhub::Client.new(consumer_key, consumer_secret) 
+      stubhub.user = 'userid'
+      stubhub.access_token = 'access_token'
+      stubhub
+    }
+
+    it "posts a file" do
+
+      File.open('/ticket.pdf', 'w+') do |file|
+        file.write('foobar')
+      end
+
+      predeliver_request = stub_request(:post, 'https://api.stubhub.com/fulfillment/pdf/v1/listing/123123?seat=1&row=100')
+
+      stubhub.predeliver({
+        listing: 123123,
+        seat: '1',
+        row: '100',
+        ticket: '/ticket.pdf'
+      })
+
+      expect(predeliver_request).to have_been_requested
+    end
+
   end
 
 end

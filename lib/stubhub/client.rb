@@ -1,10 +1,12 @@
 require 'base64'
 require 'json'
 
+require 'httmultiparty'
+
 module Stubhub
 
   class Client 
-    include HTTParty
+    include HTTMultiParty
 
     attr_accessor :access_token, :refresh_token, :expires_in, :user, :sandbox
 
@@ -62,6 +64,36 @@ module Stubhub
       if response.code == 200
         return response.parsed_response["listing"]["id"]
       end
+    end
+
+    def sales
+      response = get "/accountmanagement/sales/v1/seller/#{self.user}", {
+        sort: 'SALEDATE desc' 
+      }
+
+      if response.code == 200
+        response.parsed_response["sales"]["sale"]
+      end
+    end
+
+    def predeliver(opts = {})
+      url = "/fulfillment/pdf/v1/listing/#{opts[:listing]}?seat=#{opts[:seat]}&row=#{opts[:row]}"
+      self.class.post(url, query: {
+        ticket: File.new(opts[:ticket])
+      }, headers: {
+        'Authorization' => "Bearer #{self.access_token}"
+      })
+    end
+
+    def get(path, query)
+      options = {
+        query: query,
+        headers: {
+          'Authorization' => "Bearer #{self.access_token}"
+        }
+      }
+
+      self.class.get(path, options)
     end
 
     def post(path, type, body)
