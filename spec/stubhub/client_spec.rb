@@ -135,7 +135,8 @@ describe Stubhub::Client do
           pricePerTicket: 123.25,
           splitOptions: "NOSINGLES"
         }}, headers: {
-          'Content-Type' => 'application/json'
+          'Content-Type' => 'application/json',
+          'Authorization' => 'Bearer access_token'
         })
         .to_return(valid_response)
 
@@ -162,7 +163,8 @@ describe Stubhub::Client do
           pricePerTicket: 123.25,
           splitOptions: "NOSINGLES"
         }}, headers: {
-          'Content-Type' => 'application/json'
+          'Content-Type' => 'application/json',
+          'Authorization' => 'Bearer access_token'
         })
         .to_return(valid_response)
 
@@ -185,6 +187,10 @@ describe Stubhub::Client do
       expect(listing_id).to eq(123123)
     end
 
+  end
+
+  context ".sales" do 
+    
   end
 
 end

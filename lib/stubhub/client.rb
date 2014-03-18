@@ -81,12 +81,17 @@ module Stubhub
 
       options = {
         body: body,
-        basic_auth: {
-          username: @consumer_key,
-          password: @consumer_secret
-        },
         headers: headers
       }
+
+      if self.access_token
+        headers['Authorization'] = "Bearer #{self.access_token}"
+      else
+        options[:basic_auth] = {
+          username: @consumer_key,
+          password: @consumer_secret
+        }
+      end
       self.class.post(path, options)
     end
 
