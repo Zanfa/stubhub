@@ -61,9 +61,7 @@ module Stubhub
         listing: listing_params
       }
 
-      if response.code == 200
-        return response.parsed_response["listing"]["id"]
-      end
+      response.parsed_response["listing"]["id"]
     end
 
     def sales
@@ -71,18 +69,22 @@ module Stubhub
         sort: 'SALEDATE desc' 
       }
 
-      if response.code == 200
-        response.parsed_response["sales"]["sale"]
-      end
+      response.parsed_response["sales"]["sale"]
     end
 
     def predeliver(opts = {})
       url = "/fulfillment/pdf/v1/listing/#{opts[:listing]}?seat=#{opts[:seat]}&row=#{opts[:row]}"
-      self.class.post(url, query: {
+      response = self.class.post(url, query: {
         ticket: File.new(opts[:ticket])
       }, headers: {
         'Authorization' => "Bearer #{self.access_token}"
       })
+
+      unless response.code == 200
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      response.parsed_response
     end
 
     def get(path, query)
@@ -93,7 +95,12 @@ module Stubhub
         }
       }
 
-      self.class.get(path, options)
+      response = self.class.get(path, options)
+      unless response.code == 200
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      response
     end
 
     def post(path, type, body)
@@ -124,7 +131,14 @@ module Stubhub
           password: @consumer_secret
         }
       end
-      self.class.post(path, options)
+
+      response = self.class.post(path, options)
+
+      unless response.code == 200
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      response
     end
 
   end
