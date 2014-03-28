@@ -49,8 +49,13 @@ module Stubhub
           eventId: opts[:event_id],
           quantity: opts[:quantity],
           seats: opts[:seats],
-          pricePerTicket: opts[:price_per_ticket],
-          splitOptions: opts[:split_options].to_s.upcase.gsub('_', '')
+          pricePerTicket: {
+            amount: opts[:price_per_ticket].to_s,
+            currency: 'USD'
+          },
+          splitOption: opts[:split_option].to_s.upcase.gsub('_', ''),
+          deliveryOption: opts[:delivery_option],
+          status: 'INACTIVE' # Disable for production
       }
 
       # Optional params to support GA tickets
@@ -79,6 +84,7 @@ module Stubhub
       }, headers: {
         'Authorization' => "Bearer #{self.access_token}"
       })
+
 
       unless response.code == 200
         raise Stubhub::ApiError.new(response.code, response.body)
@@ -119,7 +125,7 @@ module Stubhub
       end
 
       options = {
-        body: body,
+        query: body,
         headers: headers
       }
 

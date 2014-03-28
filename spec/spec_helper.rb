@@ -1,7 +1,7 @@
 require 'bundler/setup'
 require 'webmock/rspec'
 require 'json'
-require 'fakefs'
+# require 'fakefs'
 Bundler.setup
 
 require 'stubhub'
