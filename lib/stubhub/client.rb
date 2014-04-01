@@ -77,6 +77,11 @@ module Stubhub
       response.parsed_response["sales"]["sale"]
     end
 
+    def ticket_traits(event_id)
+      response = get "/catalog/events/v1/#{event_id}/metadata/inventoryMetaData", {}
+      response.parsed_response["InventoryEventMetaData"]["listingAttributeList"]
+    end
+
     def predeliver(opts = {})
       url = "/fulfillment/pdf/v1/listing/#{opts[:listing]}?seat=#{opts[:seat]}&row=#{opts[:row]}"
       response = self.class.post(url, query: {

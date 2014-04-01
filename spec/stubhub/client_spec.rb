@@ -257,4 +257,25 @@ describe Stubhub::Client do
 
   end
 
+  context ".ticket_traits" do
+
+    let (:stubhub) {
+      stubhub = Stubhub::Client.new(consumer_key, consumer_secret) 
+      stubhub.user = 'userid'
+      stubhub.access_token = 'access_token'
+      stubhub
+    }
+
+    it "returns metadata" do
+      traits_request = stub_request(:get, 'https://api.stubhub.com/catalog/events/v1/4427136/metadata/inventoryMetaData?')
+        .to_return(status: 200, 
+        body: {"InventoryEventMetaData" => {"listingAttributeList" => []}}.to_json)
+
+      stubhub.ticket_traits(4427136)
+
+      expect(traits_request).to have_been_requested
+    end
+
+  end
+
 end
