@@ -77,9 +77,13 @@ module Stubhub
       response.parsed_response["sales"]["sale"]
     end
 
-    def ticket_traits(event_id)
+    def metadata(event_id)
       response = get "/catalog/events/v1/#{event_id}/metadata/inventoryMetaData", {}
       response.parsed_response["InventoryEventMetaData"]["listingAttributeList"]
+      {
+        traits: response.parsed_response["InventoryEventMetaData"]["listingAttributeList"],
+        delivery_options: response.parsed_response["InventoryEventMetaData"]["deliveryTypeList"]
+      }
     end
 
     def predeliver(opts = {})
