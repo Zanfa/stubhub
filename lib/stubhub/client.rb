@@ -55,15 +55,40 @@ module Stubhub
           },
           splitOption: opts[:split_option].to_s.upcase.gsub('_', ''),
           deliveryOption: opts[:delivery_option],
+          ticketTraits: [],
+          rows: opts[:rows],
+          section: opts[:section],
           status: 'INACTIVE' # Disable for production
       }
 
-      # Optional params to support GA tickets
-      listing_params[:section] = opts[:section] if opts.include? :section
-      listing_params[:rows] = opts[:rows] if opts.include? :rows
+      opts[:traits].each do |trait|
+        listing_params[:ticketTraits].push({id: trait})
+      end
+
+      if opts[:split_option] == -1
+        listing_params[:splitOption] = 'NOSINGLES'
+      elsif opts[:split_option] == 0
+        listing_params[:splitOption] = 'NONE'
+      else
+        listing_params[:splitOption] = 'MULTIPLES'
+        listing_params[:splitQuantity] = opts[:split_option]
+      end
       
       response = post '/inventory/listings/v1', :json, {
         listing: listing_params
+      }
+
+      response.parsed_response["listing"]["id"]
+    end
+
+    def delete_listing(stubhub_id)
+      response = delete "/inventory/listings/v1/#{stubhub_id}"
+      response.parsed_response["listing"]["id"]
+    end
+
+    def update_listing(stubhub_id, listing)
+      response = put "/inventory/listings/v1/#{stubhub_id}", {
+        listing: listing
       }
 
       response.parsed_response["listing"]["id"]
@@ -118,12 +143,48 @@ module Stubhub
       response
     end
 
+    def put(path, body)
+      headers = {
+        'Content-Type' => 'application/json'
+      }
+      
+      options = {
+        query: body.to_json,
+        headers: headers
+      }
+      
+      headers['Authorization'] = "Bearer #{self.access_token}"
+
+      response = self.class.put(path, options)
+
+      unless response.code == 200
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      response
+    end
+
+    def delete(path)
+      headers = {
+        'Content-Type' => 'application/json'
+      }
+      
+      options = {
+        headers: headers
+      }
+
+      headers['Authorization'] = "Bearer #{self.access_token}"
+
+      response = self.class.delete(path, options)
+
+      unless response.code == 200
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      response
+    end
+
     def post(path, type, body)
-      auth_hash = Base64.encode64("#{@consumer_key}:#{@consumer_secret}")
-
-      # Enable sandboxing
-      body.merge({scope: 'SANDBOX'}) if self.sandbox
-
       # Different headers for different requests
       headers = {}
       if type == :json
