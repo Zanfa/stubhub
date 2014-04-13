@@ -53,7 +53,6 @@ module Stubhub
             amount: opts[:price_per_ticket].to_s,
             currency: 'USD'
           },
-          splitOption: opts[:split_option].to_s.upcase.gsub('_', ''),
           deliveryOption: opts[:delivery_option],
           ticketTraits: [],
           rows: opts[:rows],
@@ -73,7 +72,7 @@ module Stubhub
         listing_params[:splitOption] = 'MULTIPLES'
         listing_params[:splitQuantity] = opts[:split_option]
       end
-      
+
       response = post '/inventory/listings/v1', :json, {
         listing: listing_params
       }
