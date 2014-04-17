@@ -126,6 +126,13 @@ module Stubhub
       response.parsed_response
     end
 
+    def sections(event_id)
+      url = "/search/inventory/v1/sectionsummary"
+      response = get(url, {"eventId" => event_id})
+
+      response.parsed_response["section"]
+    end
+
     def get(path, query)
       options = {
         query: query,
