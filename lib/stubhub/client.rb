@@ -61,7 +61,7 @@ module Stubhub
       }
 
       opts[:traits].each do |trait|
-        listing_params[:ticketTraits].push({id: trait})
+        listing_params[:ticketTraits].push({id: trait.to_s})
       end
 
       if opts[:split_option] == -1
@@ -72,6 +72,8 @@ module Stubhub
         listing_params[:splitOption] = 'MULTIPLES'
         listing_params[:splitQuantity] = opts[:split_option]
       end
+
+      debugger
 
       response = post '/inventory/listings/v1', :json, {
         listing: listing_params
