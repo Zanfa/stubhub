@@ -97,7 +97,7 @@ module Stubhub
 
     def update_listing(stubhub_id, listing={})
 
-      if listing.include? [:traits]
+      if listing.include? :traits
         listing[:ticketTraits] = []
 
         listing[:traits].each do |trait|
@@ -107,7 +107,7 @@ module Stubhub
         listing.delete :traits
       end
 
-      if listing.include? [:split_option]
+      if listing.include? :split_option
         if listing[:split_option] == -1
           listing[:splitOption] = 'NOSINGLES'
         elsif listing[:split_option] == 0
