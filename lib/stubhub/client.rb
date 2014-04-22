@@ -95,7 +95,40 @@ module Stubhub
       response.parsed_response["listing"]["id"]
     end
 
-    def update_listing(stubhub_id, listing)
+    def update_listing(stubhub_id, listing={})
+
+      if listing.include? [:traits]
+        listing[:ticketTraits] = []
+
+        listing[:traits].each do |trait|
+          listing[:ticketTraits].push({id: trait.to_s})
+        end
+
+        listing.delete :traits
+      end
+
+      if listing.include? [:split_option]
+        if listing[:split_option] == -1
+          listing[:splitOption] = 'NOSINGLES'
+        elsif listing[:split_option] == 0
+          listing[:splitOption] = 'NONE'
+        else
+          listing[:splitOption] = 'MULTIPLES'
+          listing[:splitQuantity] = listing[:split_option]
+        end
+
+        listing.delete :split_option
+      end
+
+      if listing.include? :price
+        listing[:pricePerTicket] = {
+          amount: listing[:price],
+          currency: 'USD'
+        }
+
+        listing.delete :price
+      end
+
       response = put "/inventory/listings/v1/#{stubhub_id}", {
         listing: listing
       }
