@@ -63,7 +63,8 @@ module Stubhub
           ticketTraits: [],
           rows: opts[:rows],
           section: opts[:section],
-          status: 'INACTIVE' # Disable for production
+          inhandDate: opts[:in_hand_date],
+          # status: 'INACTIVE' # Disable for production
       }
 
       opts[:traits].each do |trait|
