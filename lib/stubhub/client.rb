@@ -47,9 +47,9 @@ module Stubhub
     def create_listing(opts = {})
       url = "/inventory/listings/v1"
 
-      if opts[:delivery_option] == 'barcode'
-        url = "/inventory/listings/v1/barcodes"
-      end
+      # if opts[:delivery_option] == 'barcode'
+      #   url = "/inventory/listings/v1/barcodes"
+      # end
 
       listing_params = {
           eventId: opts[:event_id],
@@ -80,9 +80,9 @@ module Stubhub
         listing_params[:splitQuantity] = opts[:split_option]
       end
 
-      if opts[:delivery_option] == 'barcode'
-        listing_params[:tickets] = opts[:tickets]
-      end
+      # if opts[:delivery_option] == 'barcode'
+      #   listing_params[:tickets] = opts[:tickets]
+      # end
 
       response = post url, :json, {
         listing: listing_params
@@ -154,7 +154,28 @@ module Stubhub
       }
     end
 
+    def predeliver_barcodes(listing_id, seats)
+      tickets = []
+
+      seats.each do |seat|
+        tickets.push({
+            row: seat[:row],
+            seat: seat[:seat],
+            barcode: seat[:barcode]
+          })
+      end
+
+      response = post "/inventory/listings/v1/#{listing_id}/barcodes", :json, {
+        listing: {
+          tickets: tickets
+        }
+      }
+
+      response.parsed_response["listing"]["id"]
+    end
+
     def predeliver(opts = {})
+
       url = "/fulfillment/pdf/v1/listing/#{opts[:listing]}?seat=#{opts[:seat]}&row=#{opts[:row]}"
       response = self.class.post(url, query: {
         ticket: File.new(opts[:ticket])
@@ -168,6 +189,7 @@ module Stubhub
       end
 
       response.parsed_response
+
     end
 
     def sections(event_id)
