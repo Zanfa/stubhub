@@ -63,7 +63,6 @@ module Stubhub
           ticketTraits: [],
           rows: opts[:rows],
           section: opts[:section],
-          inhandDate: opts[:in_hand_date],
           # status: 'INACTIVE' # Disable for production
       }
 
@@ -78,6 +77,10 @@ module Stubhub
       else
         listing_params[:splitOption] = 'MULTIPLES'
         listing_params[:splitQuantity] = opts[:split_option]
+      end
+
+      if opts[:in_hand_date]
+        listing_params[:inhandDate] = opts[:in_hand_date]
       end
 
       # if opts[:delivery_option] == 'barcode'
