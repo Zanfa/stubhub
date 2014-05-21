@@ -1,6 +1,7 @@
 require 'base64'
 require 'json'
 
+require 'net/https'
 require 'httmultiparty'
 
 module Stubhub
@@ -10,7 +11,8 @@ module Stubhub
 
     attr_accessor :access_token, :refresh_token, :expires_in, :user, :sandbox
 
-    base_uri 'https://api.stubhub.com'
+    # base_uri 'https://api.stubhub.com'
+    base_uri 'http://api.stubhub.com'
 
     def initialize(consumer_key, consumer_secret)
       @consumer_key = consumer_key
@@ -193,6 +195,51 @@ module Stubhub
 
       response.parsed_response
 
+    end
+
+    def deliver(opts = {})
+
+      data = {
+        orderId: opts[:order_id],
+        ticketSeat: []
+      }
+
+      params = {}
+
+      headers = {
+        'Authorization' => "Bearer #{self.access_token}",
+        parts: {
+          json: {
+            'Content-Type' => 'application/json',
+          }
+        }
+      }
+
+      opts[:seats].each_with_index do |seat, i|
+        file_name = File.basename(seat[:file])
+        data[:ticketSeat].push({
+          row: seat[:row],
+          seat: seat[:seat],
+          fileName: file_name
+        })
+
+        params["file_#{i}"] = UploadIO.new(File.new(seat[:file]), 'application/pdf', file_name)
+      end
+
+      params[:json] = data.to_json
+
+      url = URI.parse('https://api.stubhub.com/fulfillment/pdf/v1/order')
+      req = Net::HTTP::Post::Multipart.new url.path, params, headers
+      http = Net::HTTP.new(url.host, url.port) # , 'localhost', 8888)
+      http.use_ssl = url.port == 443
+
+      response = http.start { |http| http.request(req) }
+      
+      unless response.code == 200
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      JSON.parse(response.body)
     end
 
     def sections(event_id)
