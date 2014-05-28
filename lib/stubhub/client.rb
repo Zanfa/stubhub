@@ -11,8 +11,7 @@ module Stubhub
 
     attr_accessor :access_token, :refresh_token, :expires_in, :user, :sandbox
 
-    # base_uri 'https://api.stubhub.com'
-    base_uri 'http://api.stubhub.com'
+    base_uri 'https://api.stubhub.com'
 
     def initialize(consumer_key, consumer_secret)
       @consumer_key = consumer_key
@@ -20,18 +19,18 @@ module Stubhub
     end
 
     def login(opts = {})
-      if opts.include? :refresh_token?
-        response = post '/login', :form, {
-          grant_type: 'refresh_token',
-          refresh_token: opts[:refresh_token]
-        }
-      else
+      # if opts.include? :refresh_token?
+      #   response = post '/login', :form, {
+      #     grant_type: 'refresh_token',
+      #     refresh_token: opts[:refresh_token]
+      #   }
+      # else
         response = post '/login', :form, {
           grant_type: 'password',
           username: opts[:username],
           password: opts[:password]
         }
-      end
+      # end
 
       json_body = JSON.parse(response.body, {symbolize_names: true})
 
