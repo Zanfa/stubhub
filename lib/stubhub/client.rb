@@ -248,6 +248,13 @@ module Stubhub
       response.parsed_response["section"]
     end
 
+    def get_listing(listing_id)
+      url = "/accountmanagement/listings/v1/#{listing_id}"
+      response = get(url, {})
+
+      response.parsed_response["listing"]
+    end
+
     def get(path, query)
       options = {
         query: query,
