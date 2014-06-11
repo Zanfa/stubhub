@@ -233,8 +233,8 @@ module Stubhub
       http.use_ssl = url.port == 443
 
       response = http.start { |http| http.request(req) }
-      
-      unless response.code == 200
+
+      unless response.code == "200"
         raise Stubhub::ApiError.new(response.code, response.body)
       end
 
