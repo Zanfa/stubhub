@@ -9,6 +9,8 @@ module Stubhub
   class Client 
     include HTTMultiParty
 
+    # http_proxy 'localhost', 8888
+
     attr_accessor :access_token, :refresh_token, :expires_in, :user, :sandbox
 
     base_uri 'https://api.stubhub.com'
@@ -141,11 +143,26 @@ module Stubhub
       response.parsed_response["listing"]["id"]
     end
 
-    def sales
-      response = get "/accountmanagement/sales/v1/seller/#{self.user}", {
+    def sales(options = {})
+      params = {
         sort: 'SALEDATE desc' 
       }
 
+      filters = []
+
+      if options.include? :listing_ids 
+        filters.push "LISTINGIDS:#{options[:listing_ids].join(',')}"
+      end
+
+      if options.include? :status
+        filters.push "STATUS:#{options[:status].to_s.upcase}"
+      end
+
+      unless filters.empty?
+        params[:filters] = filters.join(" AND ")
+      end
+
+      response = get "/accountmanagement/sales/v1/seller/#{self.user}", params
       response.parsed_response["sales"]["sale"]
     end
 
