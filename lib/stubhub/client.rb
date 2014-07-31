@@ -6,7 +6,7 @@ require 'httmultiparty'
 
 module Stubhub
 
-  class Client 
+  class Client
     include HTTMultiParty
 
     # http_proxy 'localhost', 8888
@@ -46,7 +46,7 @@ module Stubhub
       # Return true if login was successful
       response.code == 200
     end
-    
+
     def create_listing(opts = {})
       url = "/inventory/listings/v1"
 
@@ -145,12 +145,12 @@ module Stubhub
 
     def sales(options = {})
       params = {
-        sort: 'SALEDATE desc' 
+        sort: 'SALEDATE desc'
       }
 
       filters = []
 
-      if options.include? :listing_ids 
+      if options.include? :listing_ids
         filters.push "LISTINGIDS:#{options[:listing_ids].join(',')}"
       end
 
@@ -272,6 +272,16 @@ module Stubhub
       response.parsed_response["listing"]
     end
 
+    def get_listings(opts = {})
+      url = "/accountmanagement/listings/v1/seller/#{@user}"
+      response = get(url, {
+        start: opts[:start] || 0,
+        filters: "STATUS:ACTIVE"
+      })
+
+      response.parsed_response["listings"]["listing"]
+    end
+
     def get(path, query)
       options = {
         query: query,
@@ -292,12 +302,12 @@ module Stubhub
       headers = {
         'Content-Type' => 'application/json'
       }
-      
+
       options = {
         query: body.to_json,
         headers: headers
       }
-      
+
       headers['Authorization'] = "Bearer #{self.access_token}"
 
       response = self.class.put(path, options)
@@ -313,7 +323,7 @@ module Stubhub
       headers = {
         'Content-Type' => 'application/json'
       }
-      
+
       options = {
         headers: headers
       }
