@@ -136,6 +136,12 @@ module Stubhub
         listing.delete :price
       end
 
+      if listing.include? :memo
+        listing[:internalNotes] = listing[:memo]
+
+        listing.delete :memo
+      end
+
       response = put "/inventory/listings/v1/#{stubhub_id}", {
         listing: listing
       }
@@ -273,10 +279,15 @@ module Stubhub
     end
 
     def get_listings(opts = {})
+      filter = "STATUS:ACTIVE"
+      if opts[:inactive]
+        filter = "STATUS:INACTIVE"
+      end
+
       url = "/accountmanagement/listings/v1/seller/#{@user}"
       response = get(url, {
         start: opts[:start] || 0,
-        filters: "STATUS:ACTIVE"
+        filters: filter
       })
 
       response.parsed_response["listings"]["listing"]
