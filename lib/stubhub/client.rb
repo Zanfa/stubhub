@@ -21,6 +21,8 @@ module Stubhub
     end
 
     def login(opts = {})
+      @access_token = nil
+
       # if opts.include? :refresh_token?
       #   response = post '/login', :form, {
       #     grant_type: 'refresh_token',
