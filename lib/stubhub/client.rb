@@ -303,6 +303,8 @@ module Stubhub
         }
       }
 
+      puts "Requested: #{path} with: #{options.to_json}"
+
       response = self.class.get(path, options)
       unless response.code == 200
         raise Stubhub::ApiError.new(response.code, response.body)
