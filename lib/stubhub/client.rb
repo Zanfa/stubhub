@@ -303,7 +303,7 @@ module Stubhub
         }
       }
 
-      puts "Requested: #{path} with: #{options.to_json}"
+      puts "Requested: #{self.class.base_uri}/#{path} with: #{options.to_json}"
 
       response = self.class.get(path, options)
       unless response.code == 200
