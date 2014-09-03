@@ -10,6 +10,10 @@ module Stubhub
     include HTTMultiParty
 
     # http_proxy 'localhost', 8888
+    if ENV["PROXIMO_URL"]
+      uri = URI.parse(ENV["PROXIMO_URL"])
+      http_proxy uri.host, uri.port, uri.user, uri.password
+    end
 
     attr_accessor :access_token, :refresh_token, :expires_in, :user, :sandbox
 
