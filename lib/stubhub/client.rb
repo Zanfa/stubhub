@@ -10,8 +10,8 @@ module Stubhub
     include HTTMultiParty
 
     # http_proxy 'localhost', 8888
-    if ENV["PROXIMO_URL"]
-      uri = URI.parse(ENV["PROXIMO_URL"])
+    if ENV["STUBHUB_PROXY"]
+      uri = URI.parse(ENV["STUBHUB_PROXY"])
       http_proxy uri.host, uri.port, uri.user, uri.password
     end
 
