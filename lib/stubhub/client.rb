@@ -335,6 +335,8 @@ module Stubhub
         raise Stubhub::ApiError.new(response.code, response.body)
       end
 
+      puts "Stubhub PUT response #{response.body}"
+
       response
     end
 
@@ -354,6 +356,8 @@ module Stubhub
       unless response.code == 200
         raise Stubhub::ApiError.new(response.code, response.body)
       end
+
+      puts "Stubhub DELETE response #{response.body}"
 
       response
     end
@@ -387,6 +391,8 @@ module Stubhub
       unless response.code == 200
         raise Stubhub::ApiError.new(response.code, response.body)
       end
+
+      puts "Stubhub POST response #{response.body}"
 
       response
     end
