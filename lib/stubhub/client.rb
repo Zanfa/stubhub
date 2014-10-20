@@ -56,9 +56,6 @@ module Stubhub
     def create_listing(opts = {})
       url = "/inventory/listings/v1"
 
-      # if opts[:delivery_option] == 'barcode'
-      #   url = "/inventory/listings/v1/barcodes"
-      # end
 
       listing_params = {
           eventId: opts[:event_id],
@@ -92,9 +89,10 @@ module Stubhub
         listing_params[:inhandDate] = opts[:in_hand_date]
       end
 
-      # if opts[:delivery_option] == 'barcode'
-      #   listing_params[:tickets] = opts[:tickets]
-      # end
+      if opts.include? :tickets
+         url = "/inventory/listings/v1/barcodes"
+         listing_params[:tickets] = opts[:tickets]
+      end
 
       response = post url, :json, {
         listing: listing_params
