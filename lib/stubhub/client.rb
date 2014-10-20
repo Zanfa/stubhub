@@ -299,6 +299,42 @@ module Stubhub
       response.parsed_response["listings"]["listing"]
     end
 
+    def get_price(opts = {})
+      priceRequest = {
+        amountPerTicket: {
+          currency: "USD",
+          amount: opts[:price]
+        },
+        amountType: "DISPLAY_PRICE",
+        listingSource: "StubHubPro"
+      }
+
+      if opts[:stubhub_id]
+        priceRequest = priceRequest.merge({
+          listingId: opts[:stubhub_id],
+        })
+      else
+        priceRequest = priceRequest.merge({
+          eventId: opts[:event_id],
+          section: opts[:section],
+          row: opts[:row],
+          fulfillmentType: opts[:delivery_option]
+        })
+      end
+
+      body = {
+        priceRequestList: {
+          priceRequest: [priceRequest]
+        }
+      }
+
+      url = "/pricing/aip/v1/price"
+      response = post(url, :json, body)
+
+      response.parsed_response["priceResponseList"]
+        .andand["priceResponse"].andand[0].andand["listingPrice"].andand["amount"]
+    end
+
     def get(path, query)
       options = {
         query: query,
