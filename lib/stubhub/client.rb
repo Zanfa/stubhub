@@ -305,9 +305,14 @@ module Stubhub
           currency: "USD",
           amount: opts[:price]
         },
-        amountType: "DISPLAY_PRICE",
         listingSource: "StubHubPro"
       }
+
+      if opts[:type] == :listing_price
+        priceRequest[:amountType] = "LISTING_PRICE"
+      else
+        priceRequest[:amountType] = "DISPLAY_PRICE"
+      end
 
       if opts[:stubhub_id]
         priceRequest = priceRequest.merge({
@@ -331,8 +336,14 @@ module Stubhub
       url = "/pricing/aip/v1/price"
       response = post(url, :json, body)
 
-      response.parsed_response["priceResponseList"]
-        .andand["priceResponse"].andand[0].andand["listingPrice"].andand["amount"]
+
+      if opts[:type] == :listing_price
+        return response.parsed_response["priceResponseList"]
+          .andand["priceResponse"].andand[0].andand["displayPrice"].andand["amount"]
+      else
+        return response.parsed_response["priceResponseList"]
+          .andand["priceResponse"].andand[0].andand["listingPrice"].andand["amount"]
+      end
     end
 
     def get(path, query)
