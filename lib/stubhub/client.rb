@@ -433,6 +433,8 @@ module Stubhub
         }
       end
 
+      puts "Stubhub POST #{path} #{options}"
+
       response = self.class.post(path, options)
 
       unless response.code == 200
