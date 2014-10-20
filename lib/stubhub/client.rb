@@ -256,7 +256,9 @@ module Stubhub
 
       url = URI.parse('https://api.stubhub.com/fulfillment/pdf/v1/order')
       req = Net::HTTP::Post::Multipart.new url.path, params, headers
-      http = Net::HTTP.new(url.host, url.port) # , 'localhost', 8888)
+
+      proxy_uri = URI.parse(ENV["STUBHUB_PROXY"])
+      http = Net::HTTP.new(url.host, url.port, proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
       http.use_ssl = url.port == 443
 
       response = http.start { |http| http.request(req) }
