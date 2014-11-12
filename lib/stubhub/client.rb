@@ -375,11 +375,10 @@ module Stubhub
       }
 
       puts "Stubhub PUT request: #{body}"
-
       headers['Authorization'] = "Bearer #{self.access_token}"
 
-      puts "Stubhub PUT response #{response.body}"
       response = self.class.put(path, options)
+      puts "Stubhub PUT response #{response.body}"
 
       unless response.code == 200
         raise Stubhub::ApiError.new(response.code, response.body)
