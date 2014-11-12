@@ -374,7 +374,7 @@ module Stubhub
         headers: headers
       }
 
-      puts "Stubhub PUT request: #{body}"
+      puts "Stubhub PUT #{self.class.base_uri}/#{path} with: #{body}"
       headers['Authorization'] = "Bearer #{self.access_token}"
 
       response = self.class.put(path, options)
