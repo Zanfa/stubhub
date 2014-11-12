@@ -374,8 +374,11 @@ module Stubhub
         headers: headers
       }
 
+      puts "Stubhub PUT request: #{body}"
+
       headers['Authorization'] = "Bearer #{self.access_token}"
 
+      puts "Stubhub PUT response #{response.body}"
       response = self.class.put(path, options)
 
       unless response.code == 200
