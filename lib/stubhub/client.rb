@@ -202,7 +202,7 @@ module Stubhub
         }
       }
 
-      response.parsed_response["listing"]["id"]
+      response.parsed_response
     end
 
     def predeliver(opts = {})
