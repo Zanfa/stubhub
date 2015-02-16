@@ -1,5 +1,6 @@
 require 'base64'
 require 'json'
+require 'uri'
 
 require 'net/https'
 require 'httmultiparty'
@@ -208,6 +209,7 @@ module Stubhub
     def predeliver(opts = {})
 
       url = "/fulfillment/pdf/v1/listing/#{opts[:listing]}?seat=#{opts[:seat]}&row=#{opts[:row]}"
+      url = URI.encode(url)
       response = self.class.post(url, query: {
         ticket: File.new(opts[:ticket])
       }, headers: {
