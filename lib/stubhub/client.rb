@@ -348,6 +348,22 @@ module Stubhub
       end
     end
 
+    def search_event(q, from, to, start, limit)
+      date_format = "%Y-%m-%dT%H:%M"
+      query = {
+        q: q,
+        date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
+        start: start,
+        limit: limit,
+        status: "active",
+        sort: "dateLocal asc"
+      }
+
+      response = get("/search/catalog/events/v2", query)
+
+      response.parsed_response
+    end
+
     def get(path, query)
       options = {
         query: query,
