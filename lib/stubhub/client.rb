@@ -350,6 +350,8 @@ module Stubhub
 
     def search_event(q, from, to, start, limit)
       date_format = "%Y-%m-%dT%H:%M"
+      from = Time.new(from.year, from.month, from.day, 0, 0)
+      to = Time.new(to.year, to.month, to.day, 23, 59)
       query = {
         q: q,
         date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
