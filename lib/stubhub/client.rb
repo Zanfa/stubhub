@@ -1,7 +1,6 @@
 require 'base64'
 require 'json'
 require 'uri'
-
 require 'net/https'
 require 'httmultiparty'
 
