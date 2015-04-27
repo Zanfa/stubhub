@@ -1,7 +1,6 @@
 require 'base64'
 require 'json'
 require 'uri'
-
 require 'net/https'
 require 'httmultiparty'
 
@@ -275,7 +274,6 @@ module Stubhub
     def sections(event_id)
       url = "/search/inventory/v1/sectionsummary"
       response = get(url, {"eventId" => event_id})
-
       response.parsed_response["section"]
     end
 
@@ -364,6 +362,11 @@ module Stubhub
       response = get("/search/catalog/events/v2", query)
 
       response.parsed_response
+    end
+    # method to get ingetratedEventInd for an event from stubhub
+    def event_integrated(eventId)
+      response = get("/catalog/events/v2/#{eventId}", "")
+      response.parsed_response["event"]["integratedEventInd"]
     end
 
     def get(path, query)
