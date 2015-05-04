@@ -179,6 +179,7 @@ module Stubhub
     def metadata(event_id)
       response = get "/catalog/events/v1/#{event_id}/metadata/inventoryMetaData", {}
       {
+        isVenueScrubbed: response.parsed_response["InventoryEventMetaData"]["isVenueScrubbed"],
         traits: response.parsed_response["InventoryEventMetaData"]["listingAttributeList"],
         delivery_options: response.parsed_response["InventoryEventMetaData"]["deliveryTypeList"],
         fee: response.parsed_response["InventoryEventMetaData"]["eventDetail"]["deliveryFeePerTicket"]
