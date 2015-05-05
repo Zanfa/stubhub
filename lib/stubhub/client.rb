@@ -1,7 +1,6 @@
 require 'base64'
 require 'json'
 require 'uri'
-
 require 'net/https'
 require 'httmultiparty'
 
@@ -180,6 +179,7 @@ module Stubhub
     def metadata(event_id)
       response = get "/catalog/events/v1/#{event_id}/metadata/inventoryMetaData", {}
       {
+        isVenueScrubbed: response.parsed_response["InventoryEventMetaData"]["isVenueScrubbed"],
         traits: response.parsed_response["InventoryEventMetaData"]["listingAttributeList"],
         delivery_options: response.parsed_response["InventoryEventMetaData"]["deliveryTypeList"],
         fee: response.parsed_response["InventoryEventMetaData"]["eventDetail"]["deliveryFeePerTicket"]
@@ -275,7 +275,6 @@ module Stubhub
     def sections(event_id)
       url = "/search/inventory/v1/sectionsummary"
       response = get(url, {"eventId" => event_id})
-
       response.parsed_response["section"]
     end
 
@@ -357,13 +356,18 @@ module Stubhub
         date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
-        status: "active",
+        status: ["active", "contingent"],
         sort: "dateLocal asc"
       }
 
       response = get("/search/catalog/events/v2", query)
 
       response.parsed_response
+    end
+    # method to get ingetratedEventInd for an event from stubhub
+    def event_integrated(eventId)
+      response = get("/catalog/events/v2/#{eventId}", "")
+      response.parsed_response["event"]["integratedEventInd"]
     end
 
     def get(path, query)
