@@ -356,7 +356,7 @@ module Stubhub
         date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
-        status: "active",
+        status: ["active", "contingent"],
         sort: "dateLocal asc"
       }
 
