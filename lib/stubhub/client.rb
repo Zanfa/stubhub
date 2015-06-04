@@ -205,6 +205,47 @@ module Stubhub
 
       response.parsed_response
     end
+    
+     # job for fulfill barcode for tickets
+    def deliver_barcodes(order_id, seats)
+    puts order_id
+    data = {
+          orderId: opts[:order_id],
+          ticketSeat: []
+        }
+      seats.each do |seat|
+        data[:ticketSeat].push({
+            row: seat[:row],
+            seat: seat[:seat],
+            barcode: seat[:barcode],
+            type: seat[:type]
+          })
+      end
+      headers = {
+        'Authorization' => "Bearer #{self.access_token}",
+        parts: {
+          json: {
+            'Content-Type' => 'application/json',
+          }
+        }
+      }
+      params = {}
+      params[:json] = data.to_json
+      url = URI.parse('https://api.stubhub.com//fulfillment/barcode/v1/order/')
+      req = Net::HTTP::Post::Multipart.new url.path, params, headers
+
+      proxy_uri = URI.parse(ENV["STUBHUB_PROXY"])
+      http = Net::HTTP.new(url.host, url.port, proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
+      http.use_ssl = url.port == 443
+
+      response = http.start { |http| http.request(req) }
+
+      unless response.code == "200"
+        raise Stubhub::ApiError.new(response.code, response.body)
+      end
+
+      JSON.parse(response.body)
+    end
 
     def predeliver(opts = {})
 
