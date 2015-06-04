@@ -217,6 +217,7 @@ module Stubhub
             row: seat[:row],
             seat: seat[:seat],
             barcode: seat[:barcode]
+            type: seat[:type]
           })
       end
       response = post "/fulfillment/barcode/v1/order/", :json, {
