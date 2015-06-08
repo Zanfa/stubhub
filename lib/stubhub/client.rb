@@ -205,6 +205,24 @@ module Stubhub
 
       response.parsed_response
     end
+    
+     # job for fulfill barcode for tickets
+    def deliver_barcodes(order_id, seats)
+    puts order_id
+    ticket_seat = []
+    seats.each do |seat|
+        ticket_seat.push({
+            row: seat[:row],
+            seat: seat[:seat],
+            barcode: seat[:barcode],
+            type: seat[:type]
+          })
+      end
+      params = { orderId: order_id, ticketSeat: ticket-seat }
+      options = params.to_json
+      response = post "/fulfillment/barcode/v1/order/", :json, options
+      response.parsed_response
+    end
 
     def predeliver(opts = {})
 
@@ -270,6 +288,15 @@ module Stubhub
       end
 
       JSON.parse(response.body)
+    end
+    
+    
+    def get_airbill(order_id)
+      url = "/fulfillment/shipping/v1/labels"
+      body = { orderId: order_id }
+      response = post(url, :json , body)
+      response.parsed_response
+      response["labelContent"]
     end
 
     def sections(event_id)
