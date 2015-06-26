@@ -196,7 +196,7 @@ module Stubhub
             barcode: seat[:barcode]
           })
       end
-
+      tickets.to_json
       response = post "/inventory/listings/v1/#{listing_id}/barcodes", :json, {
         listing: {
           tickets: tickets
