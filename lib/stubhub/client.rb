@@ -218,7 +218,7 @@ module Stubhub
             type: seat[:type]
           })
       end
-      params = { orderId: order_id, ticketSeat: ticket-seat }
+      params = { orderId: order_id, ticketSeat: ticket_seat }
       options = params.to_json
       response = post "/fulfillment/barcode/v1/order/", :json, options
       response.parsed_response
@@ -289,7 +289,6 @@ module Stubhub
 
       JSON.parse(response.body)
     end
-    
     
     def get_airbill(order_id)
       url = "/fulfillment/shipping/v1/labels"
