@@ -207,23 +207,32 @@ module Stubhub
     end
     
      # job for fulfill barcode for tickets
-    def deliver_barcodes(order_id, seats)
-    puts order_id
-    ticket_seat = []
-    seats.each do |seat|
-        ticket_seat.push({
+    def deliver_barcodes(order, seats)
+      order_id = order.stubhub_id
+      ticket_seat = []
+      if order.section == "General Admission"
+        seats.each do |seat|
+          ticket_seat.push({
+            barcode: seat[:barcode],
+            type: "R"
+          })
+        end
+      else
+        seats.each do |seat|
+          ticket_seat.push({
             row: seat[:row],
             seat: seat[:seat],
             barcode: seat[:barcode],
-            type: seat[:type]
+            type: "R"
           })
+        end
       end
-      params = { orderId: order_id, ticketSeat: ticket-seat }
-      options = params.to_json
+      
+      options = { orderId: order_id, ticketSeat: ticket_seat}
       response = post "/fulfillment/barcode/v1/order/", :json, options
       response.parsed_response
-    end
-
+    end 
+    
     def predeliver(opts = {})
 
       url = "/fulfillment/pdf/v1/listing/#{opts[:listing]}?seat=#{opts[:seat]}&row=#{opts[:row]}"
