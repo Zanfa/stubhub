@@ -208,7 +208,7 @@ module Stubhub
     
      # job for fulfill barcode for tickets
     def deliver_barcodes(order, seats)
-      order_id = order.stubhub_id
+      order_id = order.external_id.to_i
       ticket_seat = []
       if order.section == "General Admission"
         seats.each do |seat|
