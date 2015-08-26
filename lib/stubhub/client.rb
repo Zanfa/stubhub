@@ -210,7 +210,7 @@ module Stubhub
     def deliver_barcodes(order, seats)
       order_id = order.external_id.to_i
       ticket_seat = []
-      if order.section == "General Admission"
+      if order.ticket.section == "General Admission"
         seats.each do |seat|
           ticket_seat.push({
             barcode: seat[:barcode],
