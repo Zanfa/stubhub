@@ -304,7 +304,7 @@ module Stubhub
       url = "/fulfillment/shipping/v1/labels"
       body = { orderId: order_id.to_i }
       response = get(url , body)
-      response.parsed_response["shippingLabels"]["shippingLabel"]["labelContent"]
+      response.parsed_response
     end
     
     def generate_airbill(order_id)
@@ -312,7 +312,7 @@ module Stubhub
       type = :json
       body = { orderId: order_id.to_i }
       response = post(url, type, body)
-      response.parsed_response["labelContent"]
+      response.parsed_response
     end
 
     def sections(event_id)
