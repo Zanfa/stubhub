@@ -159,13 +159,18 @@ module Stubhub
       }
 
       filters = []
+      
+      if options.include? :event_id
+        filters.push "EVENTID:#{options[:event_id]}"
+      end
+      
 
       if options.include? :listing_ids
         filters.push "LISTINGIDS:#{options[:listing_ids].join(',')}"
       end
 
-      if options.include? :status
-        filters.push "STATUS:#{options[:status].to_s.upcase}"
+      if options.include? :statuses
+        filters.push "STATUS:#{ options[:statuses].join(',') }"
       end
 
       unless filters.empty?
