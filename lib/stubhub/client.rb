@@ -8,7 +8,6 @@ module Stubhub
 
   class Client
     include HTTMultiParty
-
     # http_proxy 'localhost', 8888
     if ENV["STUBHUB_PROXY"]
       uri = URI.parse(ENV["STUBHUB_PROXY"])
@@ -406,6 +405,21 @@ module Stubhub
         limit: limit,
         status: ["active", "contingent"],
         sort: "dateLocal asc"
+      }
+
+      response = get("/search/catalog/events/v2", query)
+
+      response.parsed_response
+    end
+
+    def search_event_for_one_ticket(title, from, to, venue)
+      date_format = "%Y-%m-%dT%H:%M"
+       query = {
+        q: title,
+        date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
+        status: ["active", "contingent"],
+        sort: "dateLocal asc", 
+        venue: venue
       }
 
       response = get("/search/catalog/events/v2", query)
