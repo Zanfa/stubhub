@@ -190,6 +190,13 @@ module Stubhub
       }
     end
 
+    def event_sale_end_date(event_id)
+      response = get "/inventory/metadata/v1?eventId=#{event_id}", {}
+      response.parsed_response
+    end
+
+
+
     def predeliver_barcodes(listing_id, seats)
       tickets = []
 
