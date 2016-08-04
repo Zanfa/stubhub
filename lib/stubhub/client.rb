@@ -423,7 +423,7 @@ module Stubhub
       date_format = "%Y-%m-%dT%H:%M"
        query = {
         q: title,
-        date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
+        date: "#{from.strftime(date_format)}",
         status: ["active", "contingent"],
         #sort: "dateLocal asc",
         venue: venue
