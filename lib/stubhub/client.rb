@@ -410,8 +410,8 @@ module Stubhub
         date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
-        status: ["active", "contingent"],
-        sort: "dateLocal asc"
+        status: ["active", "contingent"]#,
+        #sort: "dateLocal asc"
       }
 
       response = get("/search/catalog/events/v3", query)
@@ -425,7 +425,7 @@ module Stubhub
         q: title,
         date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         status: ["active", "contingent"],
-        sort: "dateLocal asc",
+        #sort: "dateLocal asc",
         venue: venue
       }
 
