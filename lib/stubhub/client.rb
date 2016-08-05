@@ -405,14 +405,29 @@ module Stubhub
       date_format = "%Y-%m-%dT%H:%M"
       from = Time.new(from.year, from.month, from.day, 0, 0)
       to = Time.new(to.year, to.month, to.day, 23, 59)
-      query = {
+      if q == "*"
+        query = {
+        date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
+        start: start,
+        limit: limit,
+        status: ["active", "contingent"],
+        fieldList: "*,ticketInfo"
+        #,
+        #sort: "dateLocal asc"
+      }
+      else
+        query = {
         q: q,
         date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
-        status: ["active", "contingent"]#,
+        status: ["active", "contingent"], 
+        fieldList: "*,ticketInfo"
+        #,
         #sort: "dateLocal asc"
       }
+      end
+     
 
       response = get("/search/catalog/events/v3", query)
 
@@ -421,13 +436,23 @@ module Stubhub
 
     def search_event_for_one_ticket(title, from, to, venue)
       date_format = "%Y-%m-%dT%H:%M"
-       query = {
+       if title == "*"
+          query = {
+        date: "#{from.strftime(date_format)}",
+        status: ["active", "contingent"],
+        #sort: "dateLocal asc",
+        venue: venue
+      }
+       else
+      query = {
         q: title,
         date: "#{from.strftime(date_format)}",
         status: ["active", "contingent"],
         #sort: "dateLocal asc",
         venue: venue
       }
+       end
+     
 
       response = get("/search/catalog/events/v3", query)
 
