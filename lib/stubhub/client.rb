@@ -418,7 +418,7 @@ module Stubhub
       else
         query = {
         q: q,
-        date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
+        dateLocal: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
         status: ["active", "contingent"], 
@@ -438,7 +438,7 @@ module Stubhub
       date_format = "%Y-%m-%dT%H:%M"
        if title == "*"
           query = {
-        date: "#{from.strftime(date_format)}",
+        dateLocal: "#{from.strftime(date_format)}",
         status: ["active", "contingent"],
         #sort: "dateLocal asc",
         venue: venue
@@ -446,7 +446,7 @@ module Stubhub
        else
       query = {
         q: title,
-        date: "#{from.strftime(date_format)}",
+        dateLocal: "#{from.strftime(date_format)}",
         status: ["active", "contingent"],
         #sort: "dateLocal asc",
         venue: venue
