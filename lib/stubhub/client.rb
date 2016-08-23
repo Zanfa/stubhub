@@ -9,10 +9,10 @@ module Stubhub
   class Client
     include HTTMultiParty
     # http_proxy 'localhost', 8888
-    # if ENV["STUBHUB_PROXY"]
-    #   uri = URI.parse(ENV["STUBHUB_PROXY"])
-    #   http_proxy uri.host, uri.port, uri.user, uri.password
-    # end
+    if ENV["STUBHUB_PROXY"]
+      uri = URI.parse(ENV["STUBHUB_PROXY"])
+      http_proxy uri.host, uri.port, uri.user, uri.password
+    end
 
     attr_accessor :access_token, :refresh_token, :expires_in, :user, :sandbox
 
@@ -297,9 +297,8 @@ module Stubhub
       url = URI.parse('https://api.stubhub.com/fulfillment/pdf/v1/order')
       req = Net::HTTP::Post::Multipart.new url.path, params, headers
 
-      #proxy_uri = URI.parse(ENV["STUBHUB_PROXY"])
-      #http = Net::HTTP.new(url.host, url.port, proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
-      http = Net::HTTP.new(url.host, url.port)
+      proxy_uri = URI.parse(ENV["STUBHUB_PROXY"])
+      http = Net::HTTP.new(url.host, url.port, proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
       http.use_ssl = url.port == 443
 
       response = http.start { |http| http.request(req) }
