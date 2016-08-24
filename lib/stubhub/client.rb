@@ -153,34 +153,31 @@ module Stubhub
     end
 
     def sales(options = {})
-      RestClient.proxy = "http://proxy:dff4e9154274-40b6-a064-beec57b97dfc@proxy-54-83-199-89.proximo.io"
       params = {
         sort: 'SALEDATE desc'
       }
 
-      # filters = []
+      filters = []
 
-      # if options.include? :event_id
-      #   filters.push "EVENTID:#{options[:event_id]}"
-      # end
+      if options.include? :event_id
+        filters.push "EVENTID:#{options[:event_id]}"
+      end
 
 
-      # if options.include? :listing_ids
-      #   filters.push "LISTINGIDS:#{options[:listing_ids].join(',')}"
-      # end
+      if options.include? :listing_ids
+        filters.push "LISTINGIDS:#{options[:listing_ids].join(',')}"
+      end
 
-      # if options.include? :statuses
-      #   filters.push "STATUS:#{ options[:statuses].join(',') }"
-      # end
+      if options.include? :statuses
+        filters.push "STATUS:#{ options[:statuses].join(',') }"
+      end
 
-      # unless filters.empty?
-      #   params[:filters] = filters.join(" AND ")
-      # end
-     response =  RestClient.get "https://api.stubhub.com//accountmanagement/sales/v1/seller/#{self.user}", 
-      {:Authorization => "Bearer #{self.access_token}", :accept => :json, :params => params}
-     response = JSON.parse(response)
-     # response = get "/accountmanagement/sales/v1/seller/#{self.user}", params
-      response["sales"]["sale"]
+      unless filters.empty?
+        params[:filters] = filters.join(" AND ")
+      end
+
+      response = get "/accountmanagement/sales/v1/seller/#{self.user}", params
+      response.parsed_response["sales"]["sale"]
     end
 
     def metadata(event_id)
