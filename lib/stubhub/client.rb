@@ -407,7 +407,7 @@ module Stubhub
       to = Time.new(to.year, to.month, to.day, 23, 59)
       if q == "*"
         query = {
-        date: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
+        dateLocal: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
         status: ["active", "contingent"],
@@ -417,7 +417,7 @@ module Stubhub
       }
       else
         query = {
-        q: q,
+        q: q, 
         dateLocal: "#{from.strftime(date_format)} TO #{to.strftime(date_format)}",
         start: start,
         limit: limit,
